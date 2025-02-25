@@ -68,21 +68,8 @@ export const Header: React.FC<HeaderProps> = ({
     <>
       <header className="bg-gray-900 text-white px-6 py-2 flex items-center justify-between shadow-lg border-b border-gray-700">
         <div className="flex items-center space-x-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-blue-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 2L19 21H5L12 2z"
-            />
-          </svg>
-          <h1 className="text-lg font-semibold tracking-wide">Code Master</h1>
+          <img src="/logo.png" alt="Codekori" className="h-5 w-5" />
+          <h1 className="text-lg font-semibold tracking-wide">Codekori</h1>
         </div>
 
         <div className="flex items-center space-x-3">
