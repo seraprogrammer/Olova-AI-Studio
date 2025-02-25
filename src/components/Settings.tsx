@@ -51,11 +51,37 @@ export const SettingsModal: React.FC<SettingsProps> = ({
                   className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="deepseek-r1">DeepSeek-R1</option>
-                  <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                  <option value="gpt-4">GPT-4</option>
-                  <option value="claude-3-opus">Claude 3 Opus</option>
-                  <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                  <option value="llama-3.1-70b">GPT-3.5</option>
+                  <option value="gpt-4o">GPT-4o</option>
+                  <option value="phi-4">Phi-4</option>
+                  <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
                   <option value="claude-3-haiku">Claude 3 Haiku</option>
+                  <option value="qvq-72b">QVQ-72B</option>
+                  <option value="deepseek-v3">DeepSeek-V3</option>
+                  <option value="llama-3.3-70b">llama-3.3-70b</option>
+                  <option value="llama-3.2-90b">llama-3.2-90b</option>
+                  <option value="llama-3.1-8b">llama-3.1-8b</option>
+                  <option value="mixtral-small-28b">mixtral-small-28b</option>
+                  <option value="mixtral-small-28b">mixtral-small-28b</option>
+                  <option value="mixtral-8x22b">mixtral-8x22b</option>
+                  <option value="wizardlm-2-7b">wizardlm-2-7b</option>
+                  <option value="wizardlm-2-8x22b">wizardlm-2-8x22b</option>
+                  <option value="minicpm-2.5">minicpm-2.5</option>
+                  <option value="qvq-72b">qvq-72b</option>
+                  <option value="qwen-2-72b">qwen-2-72b</option>
+                  <option value="blackboxai-pro">blackboxai-pro</option>
+                  <option value="Claude">Claude</option>
+                  <option value="command-r-plus">command-r-plus</option>
+                  <option value="sonar-reasoning-pro">
+                    Sonar Reasoning Pro
+                  </option>
+                  <option value="Cohere">Cohere</option>
+                  <option value="dbrx-instruct">dbrx-instruct</option>
+                  <option value="GLM-4">GLM-4</option>
+                  <option value="yi-34b">yi-34b</option>
+                  <option value="dolphin-2.6">dolphin-2.6</option>
+                  <option value="airoboros-70b">airoboros-70b</option>
+                  <option value="lzlv-70b">lzlv-70b</option>
                 </select>
               </div>
 
