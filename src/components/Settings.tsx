@@ -13,9 +13,10 @@ export const SettingsModal: React.FC<SettingsProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [model, setModel] = useState(settings.model);
+  const [fontSize, setFontSize] = useState(settings.fontSize || 14);
 
   const handleSave = () => {
-    onSave({ model });
+    onSave({ model, fontSize });
     setIsOpen(false);
   };
 
@@ -41,32 +42,51 @@ export const SettingsModal: React.FC<SettingsProps> = ({
               </button>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-400 mb-1">
-                Model
-              </label>
-              <select
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-                className="w-full border border-gray-700 bg-gray-800 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-                <option value="deepseek-r1">DeepSeek-R1</option>
-                <option value="gpt-4o">GPT-4o</option>
-                <option value="phi-4">Phi-4</option>
-                <option value="claude-3-haiku">Claude 3 Haiku</option>
-                <option value="qvq-72b">QVQ-72B</option>
-                <option value="deepseek-v3">DeepSeek-V3</option>
-                <option value="sonar-reasoning-pro">Sonar Reasoning Pro</option>
-              </select>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Model</label>
+                <select
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="deepseek-r1">DeepSeek-R1</option>
+                  <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                  <option value="gpt-4">GPT-4</option>
+                  <option value="claude-3-opus">Claude 3 Opus</option>
+                  <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                  <option value="claude-3-haiku">Claude 3 Haiku</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Editor Font Size
+                </label>
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="range"
+                    min="10"
+                    max="24"
+                    value={fontSize}
+                    onChange={(e) => setFontSize(parseInt(e.target.value))}
+                    className="flex-1"
+                  />
+                  <div className="bg-gray-800 px-2 py-1 rounded min-w-[40px] text-center">
+                    {fontSize}px
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <button
-              onClick={handleSave}
-              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-            >
-              Save Changes
-            </button>
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+              >
+                Save Changes
+              </button>
+            </div>
           </div>
         </div>
       )}

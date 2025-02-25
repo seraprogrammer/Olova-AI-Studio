@@ -267,6 +267,7 @@ function App() {
             onChange={(value) => setEditorContent(value || "")}
             liveCodeOutput={liveCodeOutput}
             apiKey={apiKey}
+            fontSize={settings.fontSize}
           />
         </div>
       </div>
