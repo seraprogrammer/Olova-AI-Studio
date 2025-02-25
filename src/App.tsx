@@ -32,6 +32,8 @@ function App() {
     return saved ? JSON.parse(saved) : false;
   });
 
+  const [apiKey, setApiKey] = useState("");
+
   // Save messages to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("chatMessages", JSON.stringify(messages));
@@ -230,6 +232,8 @@ function App() {
         onToggleLiveCodeOutput={() => setLiveCodeOutput(!liveCodeOutput)}
         onClearChat={handleClearChat}
         onClearHistory={handleClearHistory}
+        apiKey={apiKey}
+        setApiKey={setApiKey}
       />
 
       <div className="flex-1 flex overflow-hidden">
@@ -249,6 +253,7 @@ function App() {
             content={editorContent}
             onChange={(value) => setEditorContent(value || "")}
             liveCodeOutput={liveCodeOutput}
+            apiKey={apiKey}
           />
         </div>
       </div>

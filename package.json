@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.22.0",
     "@monaco-editor/react": "^4.6.0",
     "@types/react-resizable": "^3.0.8",
     "groq-sdk": "^0.15.0",
