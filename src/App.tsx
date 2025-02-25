@@ -33,6 +33,7 @@ function App() {
   });
 
   const [apiKey, setApiKey] = useState("");
+  const [groqApiKey, setGroqApiKey] = useState("");
 
   // Save messages to localStorage whenever they change
   useEffect(() => {
@@ -223,6 +224,15 @@ function App() {
     // window.location.reload();
   };
 
+  const handleSolveProblem = (problem: string) => {
+    // We're not modifying the editor content anymore
+    // The problem will just be displayed in the sidebar
+    console.log("Problem received:", problem);
+
+    // If you want to do something with the problem later, you can store it in state
+    // setProblemDescription(problem);
+  };
+
   return (
     <div className="h-screen flex flex-col">
       <Header
@@ -234,6 +244,9 @@ function App() {
         onClearHistory={handleClearHistory}
         apiKey={apiKey}
         setApiKey={setApiKey}
+        groqApiKey={groqApiKey}
+        setGroqApiKey={setGroqApiKey}
+        onSolveProblem={handleSolveProblem}
       />
 
       <div className="flex-1 flex overflow-hidden">

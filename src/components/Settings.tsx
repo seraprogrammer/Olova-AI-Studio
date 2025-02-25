@@ -50,9 +50,14 @@ export const SettingsModal: React.FC<SettingsProps> = ({
                 onChange={(e) => setModel(e.target.value)}
                 className="w-full border border-gray-700 bg-gray-800 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
+                <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
                 <option value="deepseek-r1">DeepSeek-R1</option>
-                <option value="gpt-4">GPT-4</option>
-                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                <option value="gpt-4o">GPT-4o</option>
+                <option value="phi-4">Phi-4</option>
+                <option value="claude-3-haiku">Claude 3 Haiku</option>
+                <option value="qvq-72b">QVQ-72B</option>
+                <option value="deepseek-v3">DeepSeek-V3</option>
+                <option value="sonar-reasoning-pro">Sonar Reasoning Pro</option>
               </select>
             </div>
 
