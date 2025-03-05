@@ -560,22 +560,21 @@ function App() {
 
   // Separate the input component completely to prevent re-renders
   const ChatInput = () => {
+    // Use local state only, don't initialize from parent
     const [localInputMessage, setLocalInputMessage] = useState("");
 
+    // Only sync from parent when file content changes
     useEffect(() => {
-      // Sync with parent state when file content changes
       if (fileContent) {
         const extension = fileName?.split(".").pop()?.toLowerCase() || "";
-        setLocalInputMessage(
-          `Here's the content of my ${extension} file "${fileName}":\n\n\`\`\`${extension}\n${fileContent}\n\`\`\``
-        );
+        const newMessage = `Here's the content of my ${extension} file "${fileName}":\n\n\`\`\`${extension}\n${fileContent}\n\`\`\``;
+        setLocalInputMessage(newMessage);
       }
     }, [fileContent, fileName]);
 
     const handleLocalInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setLocalInputMessage(e.target.value);
-      // Also update parent state to ensure consistency
-      setInputMessage(e.target.value);
+      // Don't update parent state on every keystroke
     };
 
     const handleLocalSubmit = (
@@ -588,7 +587,7 @@ function App() {
       }
       if (!localInputMessage.trim() || isLoading) return;
 
-      // Call the parent submit handler with the local value
+      // Only update parent state when submitting
       const message = localInputMessage.trim();
       setLocalInputMessage("");
       handleParentSubmit(message);
