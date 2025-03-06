@@ -21,23 +21,12 @@ import {
   Brain,
   Minimize2,
   Maximize2,
-  FileText,
-  Upload,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from "remark-gfm";
 import "./App.css";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-  SignIn,
-} from "@clerk/clerk-react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "@clerk/clerk-react";
 
 interface Chat {
   id: string;
@@ -262,12 +251,6 @@ function App() {
   const [streamingContent, setStreamingContent] = useState("");
   const [selectedModel, setSelectedModel] = useState("blackboxai-pro");
   const inputRef = useRef<HTMLInputElement>(null);
-  const { isSignedIn, isLoaded } = useAuth();
-
-  // Add state for file handling
-  const [fileContent, setFileContent] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const currentChat = chats.find((chat) => chat.id === currentChatId) || null;
 
@@ -523,58 +506,12 @@ function App() {
     );
   };
 
-  // Function to handle file upload
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setFileName(file.name);
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result as string;
-      setFileContent(content);
-
-      // Always update the input message with the file content
-      const fileExtension = file.name.split(".").pop()?.toLowerCase() || "";
-      setInputMessage(
-        `Here's the content of my ${fileExtension} file "${file.name}":\n\n\`\`\`${fileExtension}\n${content}\n\`\`\``
-      );
-    };
-    reader.readAsText(file);
-  };
-
-  // Function to trigger file input click
-  const triggerFileUpload = () => {
-    fileInputRef.current?.click();
-  };
-
-  // Function to clear file content
-  const clearFileContent = () => {
-    setFileContent(null);
-    setFileName(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
   // Separate the input component completely to prevent re-renders
   const ChatInput = () => {
-    // Use local state only, don't initialize from parent
     const [localInputMessage, setLocalInputMessage] = useState("");
-
-    // Only sync from parent when file content changes
-    useEffect(() => {
-      if (fileContent) {
-        const extension = fileName?.split(".").pop()?.toLowerCase() || "";
-        const newMessage = `Here's the content of my ${extension} file "${fileName}":\n\n\`\`\`${extension}\n${fileContent}\n\`\`\``;
-        setLocalInputMessage(newMessage);
-      }
-    }, [fileContent, fileName]);
 
     const handleLocalInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setLocalInputMessage(e.target.value);
-      // Don't update parent state on every keystroke
     };
 
     const handleLocalSubmit = (
@@ -587,13 +524,10 @@ function App() {
       }
       if (!localInputMessage.trim() || isLoading) return;
 
-      // Only update parent state when submitting
+      // Call the parent submit handler with the local value
       const message = localInputMessage.trim();
       setLocalInputMessage("");
       handleParentSubmit(message);
-
-      // Clear file content after submission
-      clearFileContent();
     };
 
     return (
@@ -602,37 +536,7 @@ function App() {
         className="border-t border-[#2A2F34] bg-[#0F1419]"
       >
         <div className="max-w-4xl mx-auto p-4">
-          {fileContent && (
-            <div className="mb-3 p-3 bg-[#1A1F24] rounded-lg border border-[#2A2F34] flex items-center justify-between">
-              <div className="flex items-center">
-                <FileText className="w-4 h-4 text-emerald-500 mr-2" />
-                <span className="text-sm text-gray-300">{fileName}</span>
-              </div>
-              <button
-                type="button"
-                onClick={clearFileContent}
-                className="p-1 hover:bg-[#2A2F34] rounded-full transition-colors"
-              >
-                <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />
-              </button>
-            </div>
-          )}
           <div className="relative flex items-center">
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileUpload}
-              className="hidden"
-              accept=".txt,.js,.py,.html,.css,.md,.json,.csv,.xml,.yaml,.yml,.jsx,.tsx,.ts,.java,.c,.cpp,.rb,.php,.go,.rust,.swift,.kt,.sql"
-            />
-            <button
-              type="button"
-              onClick={triggerFileUpload}
-              className="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-emerald-500 transition-colors"
-              title="Upload file"
-            >
-              <Upload className="w-5 h-5" />
-            </button>
             <input
               type="text"
               value={localInputMessage}
@@ -644,7 +548,7 @@ function App() {
                 }
               }}
               placeholder="Ask me anything..."
-              className="w-full px-14 py-4 bg-[#1A1F24]/80 rounded-xl border border-[#2A2F34] focus:outline-none focus:border-emerald-500/20 placeholder-gray-500 text-base"
+              className="w-full px-6 py-4 bg-[#1A1F24]/80 rounded-xl border border-[#2A2F34] focus:outline-none focus:border-emerald-500/20 placeholder-gray-500 text-base pr-14"
               disabled={isLoading}
             />
             <button
@@ -659,23 +563,6 @@ function App() {
               )}
             </button>
           </div>
-          {fileContent && (
-            <div className="mt-3">
-              <details className="text-sm">
-                <summary className="cursor-pointer text-gray-400 hover:text-emerald-500 transition-colors">
-                  <span className="flex items-center">
-                    <FileText className="w-4 h-4 mr-1" />
-                    Preview file content
-                  </span>
-                </summary>
-                <div className="mt-2 p-3 bg-[#1A1F24] rounded-lg border border-[#2A2F34] max-h-40 overflow-auto">
-                  <pre className="text-xs text-gray-300 whitespace-pre-wrap">
-                    {fileContent}
-                  </pre>
-                </div>
-              </details>
-            </div>
-          )}
         </div>
       </form>
     );
@@ -685,20 +572,12 @@ function App() {
   const handleParentSubmit = async (message: string) => {
     setIsLoading(true);
 
-    // Ensure file content is included in the message if available
-    let finalMessage = message;
-    if (fileContent && !message.includes(fileContent)) {
-      const extension = fileName?.split(".").pop()?.toLowerCase() || "";
-      finalMessage = `Here's the content of my ${extension} file "${fileName}":\n\n\`\`\`${extension}\n${fileContent}\n\`\`\`\n\n${message}`;
-    }
-
     // Create new chat if needed and get its ID
     let chatId = currentChatId;
     if (!chatId) {
       const newChat: Chat = {
         id: Date.now().toString(),
-        title:
-          finalMessage.slice(0, 30) + (finalMessage.length > 30 ? "..." : ""),
+        title: message.slice(0, 30) + (message.length > 30 ? "..." : ""),
         messages: [],
         createdAt: new Date().toISOString(),
       };
@@ -712,9 +591,7 @@ function App() {
           if (chat.id === chatId && chat.messages.length === 0) {
             return {
               ...chat,
-              title:
-                finalMessage.slice(0, 30) +
-                (finalMessage.length > 30 ? "..." : ""),
+              title: message.slice(0, 30) + (message.length > 30 ? "..." : ""),
             };
           }
           return chat;
@@ -728,10 +605,7 @@ function App() {
         if (chat.id === chatId) {
           return {
             ...chat,
-            messages: [
-              ...chat.messages,
-              { role: "user", content: finalMessage },
-            ],
+            messages: [...chat.messages, { role: "user", content: message }],
             model: selectedModel,
           };
         }
@@ -763,6 +637,7 @@ function App() {
 
         const chunk = decoder.decode(value);
         accumulatedContent += chunk;
+        console.log("Received chunk:", chunk);
 
         const currentTime = Date.now();
         if (currentTime - lastUpdateTime > 150) {
@@ -770,6 +645,8 @@ function App() {
           lastUpdateTime = currentTime;
         }
       }
+
+      console.log("Final response:", accumulatedContent);
 
       // Update final response
       setChats((prev) =>
@@ -810,8 +687,7 @@ function App() {
     }
   };
 
-  // Main app content
-  const MainApp = () => (
+  return (
     <div className="flex h-screen bg-[#0F1419] text-white">
       {/* Sidebar */}
       <div className="w-72 border-r border-[#2A2F34] p-4 flex flex-col">
@@ -844,19 +720,6 @@ function App() {
           </button>
         </div>
 
-        <SignedOut>
-          <div className="flex flex-col items-center justify-center p-4 mb-4 bg-[#1A1F24] rounded-lg">
-            <p className="text-sm text-gray-400 mb-2">
-              Sign in to save your chats
-            </p>
-            <SignInButton mode="modal">
-              <button className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors">
-                Sign In
-              </button>
-            </SignInButton>
-          </div>
-        </SignedOut>
-
         <div className="mt-4 flex-1 overflow-auto space-y-2">
           {chats.map((chat) => (
             <div
@@ -884,7 +747,7 @@ function App() {
       <div className="flex-1 flex flex-col">
         {/* Model Selection Header */}
         <div className="border-b border-[#2A2F34] bg-[#1A1F24]/80 backdrop-blur-xl">
-          <div className="mx-auto px-4 py-2 flex items-center justify-between">
+          <div className="mx-auto px-4 py-2 flex items-center">
             <div className="flex items-center space-x-2">
               <Brain className="w-4 h-4 text-emerald-500" />
               <select
@@ -892,46 +755,36 @@ function App() {
                 onChange={(e) => setSelectedModel(e.target.value)}
                 className="bg-[#2A2F34]/80 px-3 py-1.5 rounded-lg border border-[#2A2F34] focus:outline-none focus:border-emerald-500/20 text-gray-300 text-sm transition-colors duration-200 hover:border-emerald-500/20"
               >
-                <option value="gpt-4o">GPT-4o</option>
-                <option value="claude-3-haiku-20240307">
-                  Claude 3 Haiku 20240307
-                </option>
-                <option value="deepseek-r1">DeepSeek R1</option>
-                <option value="gpt-3.5">GPT-3.5</option>
-                <option value="phi-4">Phi-4</option>
-                <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                <option value="gpt-4o-mini">GPT-4o Mini</option>
+                <option value="o3-mini">O3 Mini</option>
+                <option value="mixtral-8x22b">Mixtral 8x22B</option>
+                <option value="mixtral-small-24b">Mixtral Small 24B</option>
+                <option value="mixtral-small-28b">Mixtral Small 28B</option>
+                <option value="hermes-2-dpo">Hermes 2 DPO</option>
+                <option value="phi-4">Phi 4</option>
+                <option value="wizardlm-2-7b">WizardLM 2 7B</option>
+                <option value="wizardlm-2-8x22b">WizardLM 2 8x22B</option>
                 <option value="claude-3-haiku">Claude 3 Haiku</option>
-                <option value="qvq-72b">QVQ 72b</option>
-                <option value="deepseek-v3">DeepSeek V3</option>
-                <option value="llama-3.3-70b">LLaMA 3.3 70b</option>
-                <option value="llama-3.2-90b">LLaMA 3.2 90b</option>
-                <option value="llama-3.1-8b">LLaMA 3.1 8b</option>
-                <option value="mixtral-small-28b">Mixtral Small 28b</option>
-                <option value="mixtral-8x22b">Mixtral 8x22b</option>
-                <option value="wizardlm-2-7b">WizardLM 2 7b</option>
-                <option value="wizardlm-2-8x22b">WizardLM 2 8x22b</option>
-                <option value="minicpm-2.5">MiniCPM 2.5</option>
-                <option value="qwen-2-72b">Qwen 2 72b</option>
-                <option value="blackboxai-pro">BlackboxAI Pro</option>
-                <option value="claude">Claude</option>
+                <option value="blackboxai">Blackbox AI</option>
+                <option value="blackboxai-pro">Blackbox AI Pro</option>
+                <option value="command-r">Command R</option>
                 <option value="command-r-plus">Command R Plus</option>
-                <option value="cohere">Cohere</option>
+                <option value="command-r7b">Command R 7B</option>
+                <option value="qwen-2-72b">Qwen 2 72B</option>
+                <option value="qwq-32b">QWQ 32B</option>
+                <option value="qvq-72b">QVQ 72B</option>
+                <option value="deepseek-chat">DeepSeek Chat</option>
+                <option value="deepseek-v3">DeepSeek V3</option>
+                <option value="deepseek-r1">DeepSeek R1</option>
                 <option value="dbrx-instruct">DBRX Instruct</option>
-                <option value="glm-4">GLM-4</option>
-                <option value="yi-34b">Yi 34b</option>
-                <option value="dolphin-2.6">Dolphin 2.6</option>
-                <option value="airoboros-70b">Airoboros 70b</option>
-                <option value="lzlv-70b">LZLV 70b</option>
+                <option value="glm-4">GLM 4</option>
+                <option value="airoboros-70b">Airoboros 70B</option>
+                <option value="lzlv-70b">LZLV 70B</option>
+                <option value="tulu-3-405b">Tulu 3 405B</option>
+                <option value="sd-3-5">SD 3.5</option>
+                <option value="flux">Flux</option>
               </select>
             </div>
-            <SignedIn>
-              <div className="flex items-center space-x-4">
-                <div className="text-sm text-gray-400">
-                  <span className="text-emerald-500 mr-1">●</span> Signed in
-                </div>
-                <UserButton afterSignOutUrl="/" />
-              </div>
-            </SignedIn>
           </div>
         </div>
 
@@ -965,66 +818,6 @@ function App() {
         <ChatInput />
       </div>
     </div>
-  );
-
-  // Create a protected route component
-  const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    if (!isLoaded) {
-      return (
-        <div className="flex items-center justify-center h-screen">
-          Loading...
-        </div>
-      );
-    }
-
-    if (!isSignedIn) {
-      return <Navigate to="/login" />;
-    }
-
-    return <>{children}</>;
-  };
-
-  // Login page using Clerk's SignIn component
-  const LoginPage = () => (
-    <div className="flex items-center justify-center h-screen bg-[#0F1419]">
-      <SignIn routing="path" path="/login" signUpUrl="/sign-up" />
-    </div>
-  );
-
-  return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route
-        path="/sign-up"
-        element={
-          <div className="flex items-center justify-center h-screen bg-[#0F1419]">
-            <SignIn routing="path" path="/sign-up" />
-          </div>
-        }
-      />
-      <Route
-        path="/"
-        element={
-          isLoaded ? (
-            isSignedIn ? (
-              <MainApp />
-            ) : (
-              <Navigate to="/login" />
-            )
-          ) : (
-            <div>Loading...</div>
-          )
-        }
-      />
-      <Route
-        path="/chat/:chatId"
-        element={
-          <ProtectedRoute>
-            <MainApp />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
   );
 }
 
