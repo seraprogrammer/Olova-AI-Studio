@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.p-4.rounded-lg.\[\#1D1E20\].text-white {
+  background-color: #252525;
+}
