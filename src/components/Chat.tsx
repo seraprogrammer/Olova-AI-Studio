@@ -30,11 +30,15 @@ const searchModel = genAI.getGenerativeModel({
 const models = [
   { id: "gpt-4o-mini", name: "GPT-4o Mini" },
   { id: "o3-mini", name: "O3 Mini" },
+  { id: "claude-3.7-sonnet", name: "Claude Opus" },
+  { id: "gemini-2.0-flash", name: "gemini-2.0-flash" },
+  { id: "gpt-4o", name: "gpt-4o 😎" },
   { id: "mixtral-8x22b", name: "Mixtral 8x22B" },
   { id: "mixtral-small-24b", name: "Mixtral Small 24B" },
   { id: "mixtral-small-28b", name: "Mixtral Small 28B" },
   { id: "hermes-2-dpo", name: "Hermes 2 DPO" },
   { id: "phi-4", name: "Phi 4" },
+  { id: "evil", name: "evil 👿" },
   { id: "wizardlm-2-7b", name: "WizardLM 2 7B" },
   { id: "wizardlm-2-8x22b", name: "WizardLM 2 8x22B" },
   { id: "claude-3-haiku", name: "Claude 3 Haiku" },
@@ -205,7 +209,7 @@ function Chat() {
   };
 
   const handleThinkClick = () => {
-    setSelectedModel("deepseek-r1");
+    setSelectedModel("blackboxai-pro");
   };
 
   const clearHistory = () => {

@@ -38,26 +38,54 @@ const ChatInput: React.FC<ChatInputProps> = ({
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [loadingTime, setLoadingTime] = useState(0);
-  const loadingTimerRef = useRef<NodeJS.Timeout>();
+  const loadingTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const [activeButton, setActiveButton] = useState<"search" | "think" | null>(
+    null
+  );
 
   useEffect(() => {
     if (isLoading) {
       setLoadingTime(0);
-      loadingTimerRef.current = setInterval(() => {
-        setLoadingTime(prev => prev + 1);
+      loadingTimerRef.current = setTimeout(() => {
+        setLoadingTime((prev) => prev + 1);
       }, 1000);
     } else {
       if (loadingTimerRef.current) {
-        clearInterval(loadingTimerRef.current);
+        clearTimeout(loadingTimerRef.current);
       }
       setLoadingTime(0);
     }
     return () => {
       if (loadingTimerRef.current) {
-        clearInterval(loadingTimerRef.current);
+        clearTimeout(loadingTimerRef.current);
       }
     };
   }, [isLoading]);
+
+  const handleSearchClick = () => {
+    if (activeButton === "search") {
+      setActiveButton(null);
+    } else {
+      setActiveButton("search");
+      onSearch();
+    }
+  };
+
+  const handleThinkClick = () => {
+    if (activeButton === "think") {
+      setActiveButton(null);
+    } else {
+      setActiveButton("think");
+      onThinkClick();
+    }
+  };
+
+  // Reset active button when loading/searching is complete
+  useEffect(() => {
+    if (!isLoading && !isSearching) {
+      setActiveButton(null);
+    }
+  }, [isLoading, isSearching]);
 
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;
@@ -77,7 +105,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
       setMessage(message.substring(0, start) + "\n" + message.substring(end));
-      // Set cursor position after the new line
       setTimeout(() => {
         textarea.selectionStart = textarea.selectionEnd = start + 1;
       }, 0);
@@ -122,23 +149,55 @@ const ChatInput: React.FC<ChatInputProps> = ({
                   <div className="grow flex gap-1.5 max-w-full">
                     <button
                       type="button"
-                      onClick={onSearch}
-                      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-gray-200 hover:bg-gray-800 transition-colors border border-gray-700"
+                      onClick={handleSearchClick}
+                      disabled={isLoading}
+                      className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-gray-200 transition-all duration-300 border ${
+                        activeButton === "search"
+                          ? "bg-emerald-600/20 border-emerald-500 text-emerald-400 scale-105"
+                          : "hover:bg-gray-800 border-gray-700"
+                      }`}
                     >
                       <Search
                         className={`w-5 h-5 ${
                           isSearching ? "animate-spin" : ""
-                        } text-gray-400`}
+                        } ${
+                          activeButton === "search"
+                            ? "text-emerald-400"
+                            : "text-gray-400"
+                        }`}
                       />
-                      <span>DeepSearch</span>
+                      <span
+                        className={`${
+                          activeButton === "search" ? "text-emerald-400" : ""
+                        }`}
+                      >
+                        DeepSearch
+                      </span>
                     </button>
                     <button
                       type="button"
-                      onClick={onThinkClick}
-                      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-gray-200 hover:bg-gray-800 transition-colors border border-gray-700"
+                      onClick={handleThinkClick}
+                      disabled={isLoading}
+                      className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-gray-200 transition-all duration-300 border ${
+                        activeButton === "think"
+                          ? "bg-blue-600/20 border-blue-500 text-blue-400 scale-105"
+                          : "hover:bg-gray-800 border-gray-700"
+                      }`}
                     >
-                      <BrainCircuit className="w-5 h-5 text-gray-400" />
-                      <span>Think</span>
+                      <BrainCircuit
+                        className={`w-5 h-5 ${
+                          activeButton === "think"
+                            ? "text-blue-400"
+                            : "text-gray-400"
+                        }`}
+                      />
+                      <span
+                        className={`${
+                          activeButton === "think" ? "text-blue-400" : ""
+                        }`}
+                      >
+                        Think
+                      </span>
                     </button>
                   </div>
                   <ModelSelector
