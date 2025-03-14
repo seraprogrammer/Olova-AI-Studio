@@ -75,6 +75,11 @@ function Chat() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Add effect to log model changes
+  useEffect(() => {
+    console.log("Model changed to:", selectedModel);
+  }, [selectedModel]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -95,6 +100,8 @@ function Chat() {
     setChatHistory((prev) => [...prev, newMessage]);
     setMessage("");
     setIsLoading(true);
+
+    console.log(`Using model: ${selectedModel}`);
 
     try {
       const conversation = chatHistory
