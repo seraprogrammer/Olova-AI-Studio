@@ -105,19 +105,20 @@ function Chat() {
         )
         .join("\n");
 
-      const response = await fetch(
-        "https://seraprogrammerio-production.up.railway.app/chat_stream",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: conversation,
-            model: selectedModel,
-          }),
-        }
-      );
+      const response = await fetch("https://newserver-ic4m.onrender.com/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: selectedModel,
+          prompt: conversation,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const reader = response.body!.getReader();
       const decoder = new TextDecoder();
