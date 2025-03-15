@@ -64,7 +64,7 @@ const models = [
 
 function Chat() {
   const [message, setMessage] = useState("");
-  const [selectedModel, setSelectedModel] = useState("phi-4");
+  const [selectedModel, setSelectedModel] = useState("blackboxai-pro");
   const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
